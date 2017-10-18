@@ -7,8 +7,84 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    body {
+      display: flex;
+    }
+    .flex-container {
+      display: flex;
+      flex-direction: row;
+    }
+    .nav {
+      width: 230px;
+      padding-right: 20px;
+    }
+    .nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav button {
+      display: block;
+      width: 100%;
+      text-align: left;
+    }
+    my-root {
+      flex: 1;
+    }
+  </style>
 </head>
 <body>
-  <my-root></my-root>
+  <div class="flex-container">
+
+    <!-- Nav element is outside the scope of the angular root element -->
+    <aside class="nav">
+      <ul>
+        <li>Emit event on click, send to angular router</li>
+        <li>
+          <button id="dash" data-router="dashboard">Dashboard</button>
+        </li>
+        <li>
+          <button id="dash" data-router="heroes">Heroes</button>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Angular root element -->
+    <my-root></my-root>
+  </div>
+  <script>
+
+    var customEventEmitter = {
+
+      init: function() {
+
+        // select all the elements that use data-router attribute
+        var navs = document.querySelectorAll('[data-router]');
+
+        // on each one, add an event emitter on click
+        navs.forEach((elem, index, all) => {
+          elem.addEventListener('click', (evt) => {
+            
+            // add the value of the data-router attrib as the 'detail' inside event
+            // NOTE: IE11 requires a polyfill for CustomEvent constructor
+            var customEvent = new CustomEvent('router-nav', { detail: elem.getAttribute('data-router') });
+
+            // have the document dispatch the event
+            // registered listeners will need to listen for the event on document
+            document.dispatchEvent(customEvent);
+          });
+        });
+      }
+    }
+
+    customEventEmitter.init();
+    
+    // Add an example listener to verify in console the event being fired
+    document.addEventListener('router-nav', (evt) => {
+      console.log('Demo app: router nav fired, ', evt.detail);
+    });
+
+  </script>
 </body>
 </html>

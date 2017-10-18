@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'my-root',
@@ -14,5 +15,18 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Tour of Heroes';
+  title = 'Navigation Event Demo';
+
+  // Need access to the angular (SPA) router
+  constructor(router: Router) {
+
+    // Listen for the router-nav event on document
+    document.addEventListener('router-nav', (evt: CustomEvent) => {
+      console.log('AppComponent: data-router event triggered, value: ', evt.detail);
+
+      // get the value of event.detail and push it to the angular router
+      router.navigateByUrl(evt.detail);
+    });
+
+  }
 }
